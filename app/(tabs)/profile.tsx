@@ -6,8 +6,13 @@ import { ExternalLink } from '@/components/ExternalLink';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
+import { useContext } from 'react';
+import { AuthContext } from '@/components/context/AuthContext';
 
 export default function TabTwoScreen() {
+  const {authUser} = useContext(AuthContext)
+  console.log(authUser);
+  
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}

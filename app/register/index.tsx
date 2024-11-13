@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // for storing auth data locally
@@ -7,10 +7,10 @@ import baseUrl from '../../components/services/baseUrl';
 import { router } from "expo-router";
 import { AuthContext } from '@/components/context/AuthContext';
 
-const Login = () => {
+const Register = () => {
     const [eye, setEye] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {setLoadingUser, setAuthUser, authUser} = useContext(AuthContext);
+    const {setLoadingUser, setAuthUser} = useContext(AuthContext);
     const [formData, setFormData] = useState({
         username: '',
         password: ''
@@ -90,20 +90,13 @@ const Login = () => {
 
     // Navigate to the /register screen
     const handleRegisterNavigation = () => {
-        router.push('/register')
+        router.push('/login')
     };
-
-    useEffect(() => {
-        // Redirect to login if authUser is null
-        if (authUser) {
-          router.replace("/home");
-        }
-      }, [authUser]);
 
     return (
         <View style={styles.container}>
             <Image source={require('../../assets/images/icon.png')} style={styles.logo} />
-            <Text style={styles.title}>Login</Text>
+            <Text style={styles.title}>Register</Text>
             <View style={styles.inputContainer}>
                 <Text style={styles.label}>Phone/Email</Text>
                 <TextInput
@@ -135,9 +128,9 @@ const Login = () => {
                 <Text style={styles.linkText}>Forgot password?</Text>
             </TouchableOpacity>
             <Text style={styles.footerText}>
-                Don’t have an account?{' '}
+                Already have an account?{' '}
                 <Text style={styles.registerText} onPress={handleRegisterNavigation}>
-                    Register
+                    Login
                 </Text>
             </Text>
         </View>
@@ -223,4 +216,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Login;
+export default Register;
