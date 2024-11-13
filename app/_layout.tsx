@@ -4,6 +4,8 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
+import { SafeAreaView } from 'react-native-safe-area-context';
+
 
 import { useColorScheme } from '@/hooks/useColorScheme';
 
@@ -31,6 +33,7 @@ export default function RootLayout() {
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="+not-found" />
+        <Stack.Screen name="login/index" options={{ headerShown: false }} />
       </Stack>
     </ThemeProvider>
   );
