@@ -6,6 +6,8 @@ import { useNavigation } from '@react-navigation/native'; // use navigation for 
 import baseUrl from '../../components/services/baseUrl';
 import { router } from "expo-router";
 import { AuthContext } from '@/components/context/AuthContext';
+import { useFocusEffect } from "@react-navigation/native"; 
+
 
 const Login = () => {
     const [eye, setEye] = useState(false);
@@ -93,12 +95,13 @@ const Login = () => {
         router.push('/register')
     };
 
-    useEffect(() => {
-        // Redirect to login if authUser is null
-        if (authUser) {
-          router.replace("/home");
-        }
-      }, [authUser]);
+    useFocusEffect(
+        React.useCallback(() => {
+          if (authUser) {
+            router.replace("/home");
+          }
+        }, [])
+      );
 
     return (
         <View style={styles.container}>

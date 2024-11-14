@@ -14,7 +14,12 @@ export default function TabLayout() {
         tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
         headerShown: false,
         tabBarLabel: () => null,
-      }}>
+        tabBarStyle: {
+          backgroundColor: colorScheme === 'dark' ? '#FDB827' : '#ffffff',
+          borderTopWidth: 0,
+        },
+      }}
+    >
       <Tabs.Screen
         name="home"
         options={{

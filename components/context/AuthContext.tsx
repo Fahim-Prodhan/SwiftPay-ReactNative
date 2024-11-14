@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import baseUrl from "../services/baseUrl";
+import { useFocusEffect } from "@react-navigation/native";  // Import useFocusEffect
 
 export const AuthContext = createContext();
 
@@ -16,7 +17,7 @@ export const AuthContextProvider = ({ children }) => {
     try {
       // Get user data from AsyncStorage
       const userData = await AsyncStorage.getItem("authUser");
-      console.log("userData:",userData);  
+      console.log("userData:", userData);  
       if (userData) {
         const parsedUser = JSON.parse(userData);
         await fetchUserData(parsedUser);
@@ -29,9 +30,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  useEffect(() => {
-    getUserData();
-  }, []);
+  // Use useFocusEffect to re-fetch user data when the screen comes into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      getUserData();
+    }, [])
+  );
 
   const fetchUserData = async (userId) => {
     setLoadingUser(true);
@@ -50,8 +54,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    getUserData();
+  }, []); // Initial fetch when the component is mounted
+
   return (
-    <AuthContext.Provider value={{ authUser, setAuthUser, loadingUser,setLoadingUser }}>
+    <AuthContext.Provider value={{ authUser, setAuthUser, loadingUser, setLoadingUser }}>
       {children}
     </AuthContext.Provider>
   );
