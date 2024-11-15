@@ -9,7 +9,6 @@ const Transactions = () => {
   const { authUser } = useContext(AuthContext);
   const userPhone = authUser?.phone;
 
-  // Using useFocusEffect to trigger fetchTransactions when tab is focused
   useFocusEffect(
     React.useCallback(() => {
       const fetchTransactions = async () => {
@@ -19,16 +18,18 @@ const Transactions = () => {
           );
           if (!response.ok) throw new Error("Failed to fetch transactions");
           const data = await response.json();
-          setTransactions(data.map((transaction) => ({
-            id: transaction._id,
-            date: new Date(transaction.createdAt).toLocaleDateString(),
-            amount: transaction.amount,
-            type: transaction.to === userPhone ? "Credit" : "Debit",
-            description: `Transaction ID: ${transaction.transactionId}`,
-            transactionType: transaction.tType,
-            from: transaction.from,
-            to: transaction.to,
-          })));
+          setTransactions(
+            data.map((transaction) => ({
+              id: transaction._id,
+              date: new Date(transaction.createdAt).toLocaleDateString(),
+              amount: transaction.amount,
+              type: transaction.to === userPhone ? "Credit" : "Debit",
+              description: `Transaction ID: ${transaction.transactionId}`,
+              transactionType: transaction.tType,
+              from: transaction.from,
+              to: transaction.to,
+            }))
+          );
         } catch (error) {
           console.error("Error fetching transactions:", error);
         }
@@ -42,10 +43,20 @@ const Transactions = () => {
     <View style={styles.transactionItem}>
       <View style={styles.transactionHeader}>
         <View style={styles.leftSection}>
-          <Text style={styles.transactionType}>{item.transactionType}</Text>
-          <Text style={styles.target}>
-            {item.type === "Credit" ? `From: ${item.from}` : `To: ${item.to}`}
+          <Text style={styles.transactionType}>
+            {item.transactionType === "Agent Transaction" &&
+            authUser?.role === "agent"
+              ? "Cash In"
+              : item.transactionType !== "Agent Transaction"
+              ? item.transactionType
+              : "Cash Out"}
           </Text>
+
+          {item.transactionType != "Fee" && (
+            <Text style={styles.target}>
+              {item.type === "Credit" ? `From: ${item.from}` : `To: ${item.to}`}
+            </Text>
+          )}
           <Text style={styles.description}>{item.description}</Text>
         </View>
         <View style={styles.rightSection}>
@@ -55,7 +66,7 @@ const Transactions = () => {
               item.type === "Credit" ? styles.credit : styles.debit,
             ]}
           >
-            {item.type === "Credit" ? `+ $${item.amount}` : `- $${item.amount}`}
+            {item.type === "Credit" ? `+ ৳${item.amount}` : `- ৳${item.amount}`}
           </Text>
           <Text style={styles.date}>{item.date}</Text>
         </View>
@@ -87,7 +98,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     textAlign: "center",
     backgroundColor: "#FFD369",
-    paddingTop: 25,
+    paddingTop: 30,
     paddingBottom: 10,
   },
   list: {

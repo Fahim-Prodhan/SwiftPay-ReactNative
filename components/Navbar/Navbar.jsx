@@ -25,7 +25,7 @@ const Navbar = () => {
                     onPress={() => setShowBalance(!showBalance)}
                 >
                     <Text style={styles.buttonText}>
-                        {showBalance ? `Balance: ${authUser?.balance}` : 'Show Balance'}
+                        {showBalance ? `Balance: ${authUser?.balance} ৳` : 'Show Balance'}
                     </Text>
                 </TouchableOpacity>
             </View>

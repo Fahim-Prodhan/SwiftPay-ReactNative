@@ -40,6 +40,8 @@ export default function RootLayout() {
           <Stack.Screen name="+not-found" />
           <Stack.Screen name="login/index" options={{ headerShown: false }} />
           <Stack.Screen name="register/index" options={{ headerShown: false }} />
+          <Stack.Screen name="sendMoney/index" options={{ headerShown: false }} />
+          <Stack.Screen name="cashOut/index" options={{ headerShown: false }} />
         </Stack>
       </ThemeProvider>
     </AuthContextProvider>

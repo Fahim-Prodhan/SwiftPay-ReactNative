@@ -55,10 +55,6 @@ export default function HomeScreen() {
     }, [])
   );
 
-  // Handle button press
-  const handleCardPress = (cardTitle) => {
-    console.log(`Card Pressed: ${cardTitle}`);
-  };
 
   // Handle balance toggle
   const toggleBalanceVisibility = () => {
@@ -73,41 +69,31 @@ export default function HomeScreen() {
 
       {/* Static Buttons styled as Cards */}
       <View style={styles.cardContainer}>
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 1")}>
-          <Text style={styles.cardText}>Card 1</Text>
+        <TouchableOpacity style={styles.card} onPress={() =>router.push('/sendMoney')}>
+          <Text style={styles.cardText}>Send Money</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 2")}>
-          <Text style={styles.cardText}>Card 2</Text>
+        <TouchableOpacity style={styles.card} onPress={() => router.push("/cashOut")}>
+          <Text style={styles.cardText}>Cash Out</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 3")}>
-          <Text style={styles.cardText}>Card 3</Text>
+        <TouchableOpacity style={styles.card} >
+          <Text style={styles.cardText}>Recharge</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 4")}>
-          <Text style={styles.cardText}>Card 4</Text>
+        <TouchableOpacity style={styles.card} >
+          <Text style={styles.cardText}>Bill Pay</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 5")}>
-          <Text style={styles.cardText}>Card 5</Text>
+        <TouchableOpacity style={styles.card} >
+          <Text style={styles.cardText}>Add Money</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} onPress={() => handleCardPress("Card 6")}>
-          <Text style={styles.cardText}>Card 6</Text>
+        <TouchableOpacity style={styles.card}>
+          <Text style={styles.cardText}>Others</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Display balance conditionally */}
-      {isBalanceVisible && (
-        <View style={styles.balanceContainer}>
-          <Text style={styles.balanceText}>Current Balance: $100</Text> {/* Placeholder balance */}
-        </View>
-      )}
-
-      <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -131,9 +117,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-around", // Distribute cards evenly
   },
   card: {
-    backgroundColor: "#f8f8f8",
+    backgroundColor: "#7868E6",
     borderRadius: 8,
-    padding: 15,
+    paddingTop:30,
+    paddingBottom:30,
     alignItems: "center",
     justifyContent: "center",
     width: 100,
@@ -147,7 +134,7 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#333",
+    color: "#fff",
     textAlign: "center",
   },
   toggleButton: {
