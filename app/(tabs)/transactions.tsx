@@ -5,6 +5,7 @@ import { AuthContext } from "@/components/context/AuthContext";
 import baseUrl from "../../components/services/baseUrl";
 
 const Transactions = () => {
+  
   const [transactions, setTransactions] = useState([]);
   const { authUser } = useContext(AuthContext);
   const userPhone = authUser?.phone;

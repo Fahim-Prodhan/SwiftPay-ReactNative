@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage'; // for storing auth data locally
-import { useNavigation } from '@react-navigation/native'; // use navigation for native apps
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import baseUrl from '../../components/services/baseUrl';
 import { router } from "expo-router";
 import { AuthContext } from '@/components/context/AuthContext';
@@ -10,87 +10,64 @@ import { AuthContext } from '@/components/context/AuthContext';
 const Register = () => {
     const [eye, setEye] = useState(false);
     const [loading, setLoading] = useState(false);
-    const {setLoadingUser, setAuthUser} = useContext(AuthContext);
+    const { setAuthUser } = useContext(AuthContext);
     const [formData, setFormData] = useState({
-        username: '',
-        password: ''
+        name: '',
+        email: '',
+        phone: '',
+        pin: '',
     });
+    const [role, setRole] = useState('user');  
 
     const navigation = useNavigation();
 
-    const togglePasswordVisibility = () => {
-        setEye(!eye);
-    };
+    const togglePasswordVisibility = () => setEye(!eye);
 
     const handleChange = (name, value) => {
         setFormData({
             ...formData,
-            [name]: value
+            [name]: value,
         });
     };
 
-    const handleInputErrors = (username, password) => {
-        if (!username || !password) {
-            Alert.alert("Error", "Username and password are required.");
+    const handleInputErrors = () => {
+        const { name, email, phone, pin } = formData;
+        if (!name || !email || !phone || !pin) {
+            Alert.alert("Error", "All fields are required.");
+            return false;
+        }
+        if (pin.length !== 5) {
+            Alert.alert("Error", "PIN must be exactly 5 digits.");
             return false;
         }
         return true;
     };
 
-    const login = async (username, password) => {
-        const success = handleInputErrors(username, password);
-        if (!success) return;
-        setLoadingUser(true);
+    const registerUser = async () => {
+        if (!handleInputErrors()) return;
+
+        setLoading(true);
         try {
-            const res = await fetch(`${baseUrl}/api/auth/login`, {
+            const dataToSend = { ...formData, role }; // Add the selected role to the request
+            const res = await fetch(`${baseUrl}/api/auth/signup`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify(dataToSend),
             });
 
             const data = await res.json();
             if (data.error) {
                 throw new Error(data.error);
             }
-            Alert.alert("Success", "Successfully Logged in!");
+            Alert.alert("Success", "Registration successful!");
             await AsyncStorage.setItem("authUser", JSON.stringify(data));
-            const userId = await AsyncStorage.getItem('authUser')
-            const parsedUser = JSON.parse(userId);
-            await fetchUserData(parsedUser);
+            setAuthUser(data);
             navigation.navigate("index");
-            setLoadingUser(false)
         } catch (error) {
-            await AsyncStorage.setItem("authUser", '');
             Alert.alert("Error", error.message);
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleLogin = () => {  
-        login(formData.username, formData.password);
-    };
-
-    const fetchUserData = async (userId) => {
-        setLoadingUser(true);
-        try {
-          const response = await fetch(`${baseUrl}/api/auth/user/${userId._id}`);
-          if (response.ok) {
-            const userData = await response.json();
-            setAuthUser(userData);
-          } else {
-            console.error("Failed to fetch user data");
-          }
-        } catch (error) {
-          console.error("Error fetching user data:", error);
-        } finally {
-          setLoadingUser(false);
-        }
-      };
-
-    // Navigate to the /register screen
-    const handleRegisterNavigation = () => {
-        router.push('/login')
     };
 
     return (
@@ -98,12 +75,30 @@ const Register = () => {
             <Image source={require('../../assets/images/icon.png')} style={styles.logo} />
             <Text style={styles.title}>Register</Text>
             <View style={styles.inputContainer}>
-                <Text style={styles.label}>Phone/Email</Text>
+                <Text style={styles.label}>Full Name</Text>
                 <TextInput
-                    placeholder="Enter phone/email"
+                    placeholder="Enter full name"
                     style={styles.input}
-                    value={formData.username}
-                    onChangeText={(value) => handleChange('username', value)}
+                    value={formData.name}
+                    onChangeText={(value) => handleChange('name', value)}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                    placeholder="Enter email"
+                    style={styles.input}
+                    value={formData.email}
+                    onChangeText={(value) => handleChange('email', value)}
+                />
+            </View>
+            <View style={styles.inputContainer}>
+                <Text style={styles.label}>Phone</Text>
+                <TextInput
+                    placeholder="Enter phone number"
+                    style={styles.input}
+                    value={formData.phone}
+                    onChangeText={(value) => handleChange('phone', value)}
                 />
             </View>
             <View style={styles.inputContainer}>
@@ -113,23 +108,37 @@ const Register = () => {
                         placeholder="Your 5-digit pin"
                         style={[styles.input, { flex: 1 }]}
                         secureTextEntry={!eye}
-                        value={formData.password}
-                        onChangeText={(value) => handleChange('password', value)}
+                        value={formData.pin}
+                        onChangeText={(value) => handleChange('pin', value)}
                     />
                     <TouchableOpacity onPress={togglePasswordVisibility} style={styles.icon}>
                         <Icon name={eye ? 'eye' : 'eye-slash'} size={20} color="#000" />
                     </TouchableOpacity>
                 </View>
             </View>
-            <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={loading}>
-                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Login</Text>}
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.link}>
-                <Text style={styles.linkText}>Forgot password?</Text>
+            
+            {/* Role selection */}
+            <View style={styles.roleContainer}>
+                <TouchableOpacity
+                    style={[styles.roleButton, role === 'user' && styles.selectedButton]}
+                    onPress={() => setRole('user')}
+                >
+                    <Text style={styles.roleButtonText}>User</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.roleButton, role === 'agent' && styles.selectedButton]}
+                    onPress={() => setRole('agent')}
+                >
+                    <Text style={styles.roleButtonText}>Agent</Text>
+                </TouchableOpacity>
+            </View>
+
+            <TouchableOpacity style={styles.button} onPress={registerUser} disabled={loading}>
+                {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Register</Text>}
             </TouchableOpacity>
             <Text style={styles.footerText}>
                 Already have an account?{' '}
-                <Text style={styles.registerText} onPress={handleRegisterNavigation}>
+                <Text style={styles.registerText} onPress={() => router.push('/login')}>
                     Login
                 </Text>
             </Text>
@@ -198,13 +207,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    link: {
-        marginTop: 16,
-    },
-    linkText: {
-        color: '#007bff',
-        fontSize: 14,
-    },
     footerText: {
         fontSize: 14,
         color: '#333',
@@ -213,6 +215,25 @@ const styles = StyleSheet.create({
     registerText: {
         color: '#007bff',
         fontWeight: 'bold',
+    },
+    roleContainer: {
+        flexDirection: 'row',
+        marginBottom: 16,
+    },
+    roleButton: {
+        paddingVertical: 12,
+        paddingHorizontal: 30,
+        borderWidth: 1,
+        borderColor: '#ddd',
+        borderRadius: 8,
+        marginRight: 10,
+    },
+    selectedButton: {
+        backgroundColor: '#FAB12F',
+    },
+    roleButtonText: {
+        color: '#333',
+        fontSize: 16,
     },
 });
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -6,12 +6,10 @@ import { AuthContext } from "@/components/context/AuthContext";
 import Navbar from "../../components/Navbar/Navbar.jsx";
 import { useFocusEffect } from "@react-navigation/native"; 
 import baseUrl from "../../components/services/baseUrl";
-
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons'; // Importing icons
 
 export default function HomeScreen() {
-  const { authUser, setAuthUser,setLoadingUser } = useContext(AuthContext);
-
-  // Add a state to track balance toggle
+  const { authUser, setAuthUser, setLoadingUser } = useContext(AuthContext);
   const [isBalanceVisible, setIsBalanceVisible] = useState(false);
 
   const handleLogout = async () => {
@@ -23,8 +21,6 @@ export default function HomeScreen() {
       console.error("Failed to log out:", error);
     }
   };
-
-
 
   const getUser = async () => {
     const userData = await AsyncStorage.getItem("authUser");
@@ -45,7 +41,6 @@ export default function HomeScreen() {
     }
   };
 
-  // Using useFocusEffect to refetch user data whenever the screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       getUser(); 
@@ -55,10 +50,8 @@ export default function HomeScreen() {
     }, [])
   );
 
-
-  // Handle balance toggle
   const toggleBalanceVisibility = () => {
-    setIsBalanceVisible(!isBalanceVisible); // Toggle balance visibility
+    setIsBalanceVisible(!isBalanceVisible);
   };
 
   return (
@@ -70,26 +63,32 @@ export default function HomeScreen() {
       {/* Static Buttons styled as Cards */}
       <View style={styles.cardContainer}>
         <TouchableOpacity style={styles.card} onPress={() =>router.push('/sendMoney')}>
+          <MaterialIcons name="send" size={24} color="#fff" />
           <Text style={styles.cardText}>Send Money</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.card} onPress={() => router.push("/cashOut")}>
+          <FontAwesome name="money" size={24} color="#fff" />
           <Text style={styles.cardText}>Cash Out</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} >
+        <TouchableOpacity style={styles.card} onPress={() => router.push("/recharge")}>
+          <MaterialIcons name="smartphone" size={24} color="#fff" />
           <Text style={styles.cardText}>Recharge</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} >
+        <TouchableOpacity style={styles.card}>
+          <FontAwesome name="credit-card" size={24} color="#fff" />
           <Text style={styles.cardText}>Bill Pay</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.card} >
+        <TouchableOpacity style={styles.card}>
+          <MaterialIcons name="add-circle-outline" size={24} color="#fff" />
           <Text style={styles.cardText}>Add Money</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.card}>
+          <MaterialIcons name="more-horiz" size={24} color="#fff" />
           <Text style={styles.cardText}>Others</Text>
         </TouchableOpacity>
       </View>
@@ -106,27 +105,27 @@ const styles = StyleSheet.create({
   },
   navbarContainer: {
     width: "100%",
-    paddingBottom: 10, // Spacing below navbar
+    paddingBottom: 10,
   },
   cardContainer: {
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 20,
     flexDirection: "row",
-    flexWrap: "wrap", // Allows the cards to wrap to the next line
-    justifyContent: "space-around", // Distribute cards evenly
+    flexWrap: "wrap", 
+    justifyContent: "space-around", 
   },
   card: {
     backgroundColor: "#7868E6",
     borderRadius: 8,
-    paddingTop:30,
-    paddingBottom:30,
+    paddingTop: 30,
+    paddingBottom: 30,
     alignItems: "center",
     justifyContent: "center",
     width: 100,
     margin: 5,
-    elevation: 3, // Adds shadow for a raised look
-    shadowColor: "#000", // For iOS shadow
+    elevation: 3, 
+    shadowColor: "#000", 
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.8,
     shadowRadius: 2,
@@ -136,11 +135,12 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#fff",
     textAlign: "center",
+    marginTop: 5, // Space between icon and text
   },
   toggleButton: {
     marginVertical: 10,
     padding: 10,
-    backgroundColor: "#4CAF50", // Green color for toggle button
+    backgroundColor: "#4CAF50", 
     borderRadius: 5,
   },
   toggleText: {
